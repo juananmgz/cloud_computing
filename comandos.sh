@@ -1,5 +1,5 @@
 ################################################################################
-#   STARTING...                                                                #
+#   RESTARTING...                                                              #
 ################################################################################
 
 clear
@@ -32,7 +32,6 @@ export INGRESS_HOST=127.0.0.1
 export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
 export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
 echo " [-] Gateaway: $GATEWAY_URL"
-echo ""
 cd ..
 
 
@@ -65,13 +64,20 @@ docker build -t frontend-microservice:1.0.2 ./microservicios/Frontend-microservi
 
 
 ################################################################################
-#   DATABASE                                                                   #
+#   DEPLOYMENTS                                                                #
 ################################################################################
+
+#             ####################################################             #
+# ------------##                    DATABASE                    ##------------ #
+#             ####################################################             #
 
 kubectl apply -f ./kubernetes/deployments/deploy_mysql.yaml
 kubectl apply -f ./kubernetes/deployments/deploy_mongo.yaml
 
 
+#             ####################################################             #
+# ------------##                  MICROSERVICES                 ##------------ #
+#             ####################################################             #
 
 #### SERVICES
 kubectl apply -f ./kubernetes/services/service_drinks.yaml
@@ -90,9 +96,19 @@ kubectl apply -f ./kubernetes/deployments/version_1/deployment_frontend.yaml
 
 
 #             ####################################################             #
-# ------------##                      KIALI                     ##------------ #
+# ------------##           GATEAWAY & VIRTUAL SERVICES          ##------------ #
 #             ####################################################             #
 
+kubectl apply -f ./kubernetes/gateway.yaml
+kubectl apply -f ./kubernetes/virtual_service_frontend.yaml
+kubectl apply -f ./kubernetes/virtual_service_router.yaml
+
+
+
+
+#             ####################################################             #
+# ------------##                      KIALI                     ##------------ #
+#             ####################################################             #
 
 cd ./istio-1.14.1
 kubectl apply -f samples/addons
@@ -101,6 +117,13 @@ istioctl dashboard kiali
 
 
 
-  ## -> How to prove a pod is ok?
-  # kubectl get pods
-  # kubectl exec --stdin --tty <nombre pod> -- /bin/bash
+
+
+
+### How to prove a pod is ok?
+  # -> kubectl get pods
+  # -> kubectl exec --stdin --tty <nombre pod> -- /bin/bash
+
+### How to add/remove the virtual services
+  # -> kubectl apply -f <x.yaml>
+  # -> kubectl remove -f <x.yaml>
