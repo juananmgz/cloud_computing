@@ -1,0 +1,134 @@
+import express, { Request, Response, Router } from "express";
+import { DrinkEntity } from "../../database/entities/drink.entity";
+import { DrinkModel } from "../../models/drinks.model";
+
+
+const drinksRouter: Router = express.Router();
+
+drinksRouter.get("/drinks", async (_req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const drinks: DrinkEntity[] = await DrinkModel.getDrinks();
+    drinks.length > 0
+      ? res.status(200).send(JSON.stringify({ totalDrinks: drinks.length, drinks: drinks }))
+      : res.status(404).send([]);
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+drinksRouter.get("/drinks/:id", async (req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const drink: DrinkEntity = await DrinkModel.getDrinkById(req.params.id);
+    drink
+      ? res.status(200).send(drink)
+      : res.status(404).send({});
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+drinksRouter.delete("/drinks/:id", async (req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const result: Boolean = await DrinkModel.deleteDrinkById(req.params.id);
+    result
+      ? res.status(202).send(result)
+      : res.status(404).send({});
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+drinksRouter.post("/drinks", async (req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const drink: DrinkEntity = new DrinkEntity();
+
+    drink.id = req.body.id;
+    drink.name = req.body.name;
+    drink.price = req.body.price;
+    drink.price_base = req.body.price_base;
+
+    const createdDrink: DrinkEntity = await DrinkModel.saveDrink(drink);
+
+    createdDrink
+      ? res.status(201).send(createdDrink)
+      : res.status(500).send({});
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+drinksRouter.put("/drinks/:id", async (req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const drink: DrinkEntity = new DrinkEntity();
+
+    drink.id = req.params.id;
+    drink.name = req.body.name;
+    drink.price = req.body.price;
+    drink.price_base = req.body.price_base;
+
+    const updatedDrink: DrinkEntity = await DrinkModel.saveDrink(drink);
+
+    updatedDrink
+      ? res.status(204).send(updatedDrink)
+      : res.status(500).send({});
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+drinksRouter.put("/drinks/admin/cracks", async (req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const drinksList: DrinkEntity[] = await DrinkModel.getDrinks();
+    let updated: boolean = false;
+
+    drinksList.forEach(async (d) => {
+      // Cambio version 2
+      if(req.body.isPerc) {
+        d.price = d.price * (1 - (req.body.price_on_crack / 100));
+      } else {
+        d.price = req.body.price_on_crack;
+      }
+
+      const createdDrink: DrinkEntity = await DrinkModel.saveDrink(d);
+    });
+
+    updated
+      ? res.status(201).send(updated)
+      : res.status(500).send({});
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+drinksRouter.put("/drinks/admin/resetPrices", async (req: Request, res: Response) => {
+  res.header("X-version", "2");
+
+  try {
+    const drinksList: DrinkEntity[] = await DrinkModel.getDrinks();
+    let updated: boolean = false;
+    drinksList.forEach(async (d) => {
+      d.price = d.price_base;
+      const createdDrink: DrinkEntity = await DrinkModel.saveDrink(d);
+    });
+
+    updated
+      ? res.status(201).send(updated)
+      : res.status(500).send({});
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+});
+
+export default drinksRouter;

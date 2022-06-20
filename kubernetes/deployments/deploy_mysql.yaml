@@ -1,0 +1,111 @@
+################################################################################
+#  MYSQL                                                                       #
+################################################################################
+---
+
+### Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+type: kubernetes.io/basic-auth
+stringData:
+  password: Password123!
+  database: drinksdb
+
+---
+
+### Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    service: mysql
+spec:
+  ports:
+    - port: 3306
+      name: tcp
+  selector:
+    app: mysql
+
+---
+
+### Volume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysqldata-pv-volumen
+  labels:
+    type: local
+    app: mysql
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/mysql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysqldata-pv-claim
+  labels:
+    app: mysql
+spec:
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+### Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: mysql
+        version: v1
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: database
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysqldata-pv-claim

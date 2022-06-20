@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <%- include("./partials/head.ejs") %>
+    <title>Prueba - Bursatiles</title>
+  </head>
+
+  <body class="bg-dark text-light h1" style="font-family: monospace;">
+    <div class="container mt-5">
+      <% drinks.drinks.forEach(function(drink) { %>
+        <div id="bebida-1" class="row py-4">
+          <div class="col-4">
+            <%= drink.name %>
+          </div>
+          <div class="col-2" id="<%= drink.id %>">
+            <% if (drink.price >= drink.price_base) { %>
+              <span class="me-5 text-warning" ><%= drink.price %>€</span><span><%= drink.price_base %>€</span>
+            <% } else { %>
+              <span class="me-5" style="color: lightskyblue" ><%= drink.price %>€</span><span><%= drink.price_base %>€</span>
+            <% } %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </body>
+</html>

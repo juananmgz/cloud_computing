@@ -1,0 +1,30 @@
+################################################################################
+#  ROUTER                                                                      #
+################################################################################
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: router-v1
+  labels:
+    app: router
+    version: v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: router
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: router
+        version: v1
+    spec:
+      containers:
+        - name: router
+          image: router-microservice:1.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4002

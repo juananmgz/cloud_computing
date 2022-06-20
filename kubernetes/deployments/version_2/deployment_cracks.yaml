@@ -1,0 +1,30 @@
+################################################################################
+#  CRACKS                                                                      #
+################################################################################
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cracks-v2
+  labels:
+    app: cracks
+    version: v2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cracks
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: cracks
+        version: v2
+    spec:
+      containers:
+        - name: cracks
+          image: cracks-microservice:1.0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4001
