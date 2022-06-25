@@ -6,21 +6,21 @@ export class Database {
   private connection: Connection;
 
   public async initDatabase() {
+      dotenv.config();
+      this.connection = await createConnection({
+        type: "mysql",
+        host: process.env.DATABASE_ROUTE,
+        port: 3306,
+        username: process.env.DATABASE_USER,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE,
+        entities: [DrinkEntity],
+        synchronize: true,
+      });
 
-    dotenv.config();
-    this.connection = await createConnection({
-      type: "mysql",
-      host: process.env.DATABASE_ROUTE,
-      port: Number(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USER,
-      password: process.env.PASSWORD,
-      database: process.env.DATABASE,
-      entities: [DrinkEntity],
-      synchronize: true,
-    });
-    console.log("[DRINKS] database - created");
+      console.log("[DRINKS] database - created");
 
-    return this.connection;
+      return this.connection;
   }
 
   public getConnection(): Connection {

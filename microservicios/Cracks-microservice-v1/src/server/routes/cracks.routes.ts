@@ -12,8 +12,9 @@ cracksRouter.get("/cracks", async (_req: Request, res: Response) => {
   try {
     const cracks: CrackEntity[] = await CrackModel.getCracks();
     cracks.length > 0
-      ? res.status(200).send(JSON.stringify({ totalCracks: cracks.length, cracks: cracks }))
-      : res.status(404).send([]);
+    // Cambio version 2
+      ? res.status(200).send(JSON.stringify(cracks))
+      : res.status(203).send([]);
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -26,7 +27,7 @@ cracksRouter.get("/cracks/:id", async (req: Request, res: Response) => {
     const crack = await CrackModel.getCrackById(req.params.id);
     crack
       ? res.status(200).send(JSON.stringify(crack))
-      : res.status(404).send([]);
+      : res.status(203).send({});
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -34,6 +35,7 @@ cracksRouter.get("/cracks/:id", async (req: Request, res: Response) => {
 
 cracksRouter.post("/cracks", async (req: Request, res: Response) => {
   res.header("X-version", "1");
+
 
   try {
     const id = uuidv4();

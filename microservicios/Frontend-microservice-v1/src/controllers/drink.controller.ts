@@ -14,7 +14,7 @@ export interface GetDrinks {
 
 export class DrinkController {
   public static async GetDrinkById(req: Request): Promise<GetDrink> {
-    const response = await fetch("http://" + process.env.ROUTER_ROUTE + "/drinks:" + process.env.ROUTER_PORT + req.url);
+    const response = await fetch(`http://${process.env.ROUTER_ROUTE}:4002/drinks/${req.params.id}`);
 
     // return await {
     //   drinkData: await response.json(),
@@ -26,7 +26,7 @@ export class DrinkController {
 
 
   public static async getDrinks(req: Request) {
-    const response = await fetch("http://" + process.env.ROUTER_ROUTE + ":" + process.env.ROUTER_PORT + "/drinks");
+    const response = await fetch(`http://${process.env.ROUTER_ROUTE}:4002/drinks`);
 
     return await response.json()
   }

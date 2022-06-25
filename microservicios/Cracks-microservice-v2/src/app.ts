@@ -2,9 +2,9 @@ import database from "./database/database";
 import app from "./server/server";
 
 database.initDatabase().then(() => {
-  app.listen(process.env.PORT, () => {
+  app.listen(4001, () => {
     return console.log(
-      `${new Date()} server is listening on ${process.env.PORT}`
+      `${new Date()} server is listening on 4001`
     );
   });
 });

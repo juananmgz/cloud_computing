@@ -1,0 +1,56 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: drinks-enrouting-v2
+spec:
+  hosts:
+    - drinks
+  http:
+    - route:
+        - destination:
+            host: drinks
+            subset: v2
+          weight: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: cracks-enrouting-v2
+spec:
+  hosts:
+    - cracks
+  http:
+    - route:
+        - destination:
+            host: cracks
+            subset: v2
+          weight: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: router-enrouting-v2
+spec:
+  hosts:
+    - router
+  http:
+    - route:
+        - destination:
+            host: router
+            subset: v2
+          weight: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: frontend-enrouting-v2
+spec:
+  hosts:
+    - frontend
+  http:
+    - route:
+        - destination:
+            host: frontend
+            subset: v2
+          weight: 100
+---

@@ -1,5 +1,5 @@
 ################################################################################
-#  MYSQL                                                                       #
+#  MARIADB                                                                       #
 ################################################################################
 ---
 
@@ -7,10 +7,10 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mysql-secret
+  name: mariadb-secret
 type: kubernetes.io/basic-auth
 stringData:
-  password: Password123!
+  password: password
   database: drinksdb
 
 ---
@@ -19,16 +19,16 @@ stringData:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: mariadb
   labels:
-    app: mysql
-    service: mysql
+    app: mariadb
+    service: mariadb
 spec:
   ports:
     - port: 3306
       name: tcp
   selector:
-    app: mysql
+    app: mariadb
 
 ---
 
@@ -36,10 +36,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysqldata-pv-volumen
+  name: mariadbdata-pv-volumen
   labels:
     type: local
-    app: mysql
+    app: mariadb
 spec:
   storageClassName: local-storage
   capacity:
@@ -47,14 +47,14 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /mnt/data/mysql
+    path: /mnt/data/mariadb
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysqldata-pv-claim
+  name: mariadbdata-pv-claim
   labels:
-    app: mysql
+    app: mariadb
 spec:
   storageClassName: local-storage
   accessModes:
@@ -69,43 +69,43 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: mariadb
   labels:
-    app: mysql
+    app: mariadb
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: mariadb
       version: v1
   template:
     metadata:
       labels:
-        app: mysql
+        app: mariadb
         version: v1
     spec:
       containers:
-        - name: mysql
-          image: mysql:latest
+        - name: mariadb
+          image: mariadb:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
           env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: MARIADB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
+                  name: mariadb-secret
                   key: password
-            - name: MYSQL_DATABASE
+            - name: MARIADB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
+                  name: mariadb-secret
                   key: database
           volumeMounts:
-            - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
+            - name: mariadb-persistent-storage
+              mountPath: /var/lib/mariadb
       volumes:
-        - name: mysql-persistent-storage
+        - name: mariadb-persistent-storage
           persistentVolumeClaim:
-            claimName: mysqldata-pv-claim
+            claimName: mariadbdata-pv-claim

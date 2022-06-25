@@ -1,19 +1,20 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: frontends
+  name: router
 spec:
   hosts:
-  - "*"
+    - "*"
   gateways:
-  - gateway
+    - services-gateway
   http:
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        host: frontend
-        port:
-          number: 4005
+    - match:
+        - uri:
+            exact: /drinks
+      route:
+        - destination:
+            host: router
+            port:
+              number: 4005
 ---
+

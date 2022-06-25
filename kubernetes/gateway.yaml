@@ -1,10 +1,10 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: gateway
+  name: services-gateway
 spec:
   selector:
-    istio: ingressgateway # Haciendo uso del controlador que tiene por defecto Istio
+    istio: ingressgateway
   servers:
     - port:
         number: 80

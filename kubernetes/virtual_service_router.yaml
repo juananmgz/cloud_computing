@@ -4,16 +4,19 @@ metadata:
   name: router
 spec:
   hosts:
-  - "*"
+    - "*"
   gateways:
-  - gateway
+    - services-gateway
   http:
-  - match:
-    - uri:
-        exact: /
-    route:
-    - destination:
-        host: router
-        port:
-          number: 4002
+    - match:
+        - uri:
+            prefix: /drinks
+        - uri:
+            prefix: /cracks
+      route:
+        - destination:
+            host: router
+            port:
+              number: 4002
 ---
+

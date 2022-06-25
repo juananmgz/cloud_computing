@@ -11,7 +11,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   database: cracksdb
-  password: Password123!
+  password: password
   username: root
 
 ---

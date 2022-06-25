@@ -13,7 +13,7 @@ cracksRouter.get("/cracks", async (_req: Request, res: Response) => {
     const cracks: CrackEntity[] = await CrackModel.getCracks();
     cracks.length > 0
       ? res.status(200).send(JSON.stringify({ totalCracks: cracks.length, cracks: cracks }))
-      : res.status(404).send([]);
+      : res.status(203).send([]);
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -26,7 +26,7 @@ cracksRouter.get("/cracks/:id", async (req: Request, res: Response) => {
     const crack = await CrackModel.getCrackById(req.params.id);
     crack
       ? res.status(200).send(JSON.stringify(crack))
-      : res.status(404).send([]);
+      : res.status(203).send({});
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -66,6 +66,8 @@ cracksRouter.put("/cracks/:id/end", async (req: Request, res: Response) => {
     const id = req.params.id;
     const date = crack.date;
     const crackEnd = crack.crackEnd;
+
+    //cambio version 2
     const price_on_crack = 1 - (req.body.price_on_crack / 100);
     const isPerc = true;
     const active = false;

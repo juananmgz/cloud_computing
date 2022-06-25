@@ -12,7 +12,7 @@ drinksRouter.get("/drinks", async (_req: Request, res: Response) => {
     const drinks: DrinkEntity[] = await DrinkModel.getDrinks();
     drinks.length > 0
       ? res.status(200).send(JSON.stringify({ totalDrinks: drinks.length, drinks: drinks }))
-      : res.status(404).send([]);
+      : res.status(203).send([]);
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -25,7 +25,7 @@ drinksRouter.get("/drinks/:id", async (req: Request, res: Response) => {
     const drink: DrinkEntity = await DrinkModel.getDrinkById(req.params.id);
     drink
       ? res.status(200).send(drink)
-      : res.status(404).send({});
+      : res.status(203).send({});
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -91,22 +91,13 @@ drinksRouter.put("/drinks/admin/cracks", async (req: Request, res: Response) => 
 
   try {
     const drinksList: DrinkEntity[] = await DrinkModel.getDrinks();
-    let updated: boolean = false;
-
     drinksList.forEach(async (d) => {
       // Cambio version 2
-      if(req.body.isPerc) {
-        d.price = d.price * (1 - (req.body.price_on_crack / 100));
-      } else {
-        d.price = req.body.price_on_crack;
-      }
-
-      const createdDrink: DrinkEntity = await DrinkModel.saveDrink(d);
+      d.price = d.price_base * (1 - (req.body.price_on_crack / 100));
+      await DrinkModel.saveDrink(d);
     });
 
-    updated
-      ? res.status(201).send(updated)
-      : res.status(500).send({});
+    res.status(201).send(true);
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
@@ -117,16 +108,14 @@ drinksRouter.put("/drinks/admin/resetPrices", async (req: Request, res: Response
 
   try {
     const drinksList: DrinkEntity[] = await DrinkModel.getDrinks();
-    let updated: boolean = false;
     drinksList.forEach(async (d) => {
       d.price = d.price_base;
-      const createdDrink: DrinkEntity = await DrinkModel.saveDrink(d);
+      await DrinkModel.saveDrink(d);
     });
 
-    updated
-      ? res.status(201).send(updated)
-      : res.status(500).send({});
+    res.status(201).send(true);
   } catch (err) {
+    console.log(err.message);
     res.status(500).json({ status: 500, message: err.message });
   }
 });
