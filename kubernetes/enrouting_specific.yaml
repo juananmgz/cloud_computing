@@ -1,7 +1,13 @@
+################################################################################
+#  ENROUTING - V1 (100%)                                                       #
+################################################################################
+---
+
+### Drinks
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: drinks-enrouting-50-50
+  name: drinks-enrouting-specific
 spec:
   hosts:
     - drinks
@@ -10,16 +16,19 @@ spec:
       - destination:
           host: drinks
           subset: v1
-        weight: 100
+        weight: 0
       - destination:
           host: drinks
           subset: v2
-        weight: 0
+        weight: 100
+
 ---
+
+### Cracks
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: cracks-enrouting-50-50
+  name: cracks-enrouting-specific
 spec:
   hosts:
     - cracks
@@ -28,16 +37,19 @@ spec:
       - destination:
           host: cracks
           subset: v1
-        weight: 0
+        weight: 100
       - destination:
           host: cracks
           subset: v2
-        weight: 100
+        weight: 0
+
 ---
+
+### Router
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: router-enrouting-50-50
+  name: router-enrouting-specific
 spec:
   hosts:
     - router
@@ -46,16 +58,19 @@ spec:
       - destination:
           host: router
           subset: v1
-        weight: 100
+        weight: 0
       - destination:
           host: router
           subset: v2
-        weight: 0
+        weight: 100
+
 ---
+
+### Frontend
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: frontend-enrouting-50-50
+  name: frontend-enrouting-specific
 spec:
   hosts:
     - frontend
@@ -64,9 +79,8 @@ spec:
       - destination:
           host: frontend
           subset: v1
-        weight: 0
+        weight: 100
       - destination:
           host: frontend
           subset: v2
-        weight: 100
----
+        weight: 0

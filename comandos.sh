@@ -3,7 +3,7 @@
 ################################################################################
 
 clear
-docker image prune -a
+# docker image prune -a
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
 
@@ -11,9 +11,16 @@ docker rm $(docker ps -a -q)
 # ------------##                RESET KUBERNETES                ##------------ #
 #             ####################################################             #
 
+kubectl delete -f ./kubernetes/enrouting_v1.yaml
+kubectl delete -f ./kubernetes/enrouting_v2.yaml
+kubectl delete -f ./kubernetes/enrouting_50-50.yaml
+kubectl delete -f ./kubernetes/enrouting_specific.yaml
+
+
 kubectl delete -f ./kubernetes/gateway.yaml
 kubectl delete -f ./kubernetes/virtual_service_router.yaml
 kubectl delete -f ./kubernetes/virtual_service_frontend.yaml
+
 
 kubectl delete -f ./kubernetes/deployments/version_1/deployment_drinks.yaml
 kubectl delete -f ./kubernetes/deployments/version_1/deployment_cracks.yaml
@@ -31,8 +38,8 @@ kubectl delete -f ./kubernetes/services/service_router.yaml
 kubectl delete -f ./kubernetes/services/service_frontend.yaml
 
 
-kubectl apply -f ./kubernetes/deployments/deploy_mariadb.yaml
-kubectl apply -f ./kubernetes/deployments/deploy_mongo.yaml
+# kubectl delete -f ./kubernetes/deployments/deploy_mariadb.yaml
+# kubectl delete -f ./kubernetes/deployments/deploy_mongo.yaml
 
 
 
@@ -113,7 +120,6 @@ kubectl apply -f ./kubernetes/deployments/deploy_mariadb.yaml
 kubectl apply -f ./kubernetes/deployments/deploy_mongo.yaml
 
 
-
 #             ####################################################             #
 # ------------##                    SERVICES                    ##------------ #
 #             ####################################################             #
@@ -146,9 +152,17 @@ kubectl apply -f ./kubernetes/deployments/version_2/deployment_frontend.yaml
 
 
 #### CREATING DATA (pods: drinks y cracks):
-  ## -> clear; kubectl exec --stdin --tty <pod> -- /bin/bash
-  ## -> [inside the pod] npm run create-data
+  ## -> clear; kubectl exec --stdin --tty <drinks-pod> -- /bin/bash
+  ## -> [inside the pod] npm run create-data; exit
 
+
+
+
+
+
+################################################################################
+#   CONFIGURATIONS                                                             #
+################################################################################
 
 
 #             ####################################################             #
@@ -161,17 +175,35 @@ kubectl apply -f ./kubernetes/virtual_service_frontend.yaml
 
 
 
-kubectl apply -f ./kubernetes/routing_v1.yaml
+#             ####################################################             #
+# ------------##                   ENROUTINGS                   ##------------ #
+#             ####################################################             #
+
+### Routing - 100% traffic to V1
+kubectl apply -f ./kubernetes/enrouting_v1.yaml
+### Routing - 100% traffic to V2
+kubectl apply -f ./kubernetes/enrouting_v2.yaml
+### Routing - 50% traffic to V1 + 50% traffic to V2
+kubectl apply -f ./kubernetes/enrouting_50-50.yaml
+### Routing - Specific nodes traffic
+kubectl apply -f ./kubernetes/enrouting_specific.yaml
+
+
+
+
+
 
 
 ################################################################################
+#   [EXTRA INFO]                                                               #
+################################################################################
 
-# [EXTRA INFO]
+#### PROVE PODS:
+  ## -> clear; kubectl get pods
+  ## -> clear; kubectl exec --stdin --tty <nombre pod> -- /bin/bash
 
-  ### How to prove a pod is ok?
-    # -> clear; kubectl get pods
-    # -> clear; kubectl exec --stdin --tty <nombre pod> -- /bin/bash
+#### ADD/REMOVE AN ELEMENT TO KUBERNETE NETWORK
+  ## -> kubectl apply -f <x.yaml>
+  ## -> kubectl delete -f <x.yaml>
 
-  ### How to add/remove the virtual services
-    # -> kubectl apply -f <x.yaml>
-    # -> kubectl apply -f <x.yaml>
+################################################################################

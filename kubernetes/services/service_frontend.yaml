@@ -13,7 +13,7 @@ metadata:
     service: frontend
 spec:
   ports:
-    - port: 4002
+    - port: 4005
       name: http
   selector:
     app: frontend

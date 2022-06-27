@@ -13,7 +13,7 @@ cracksRouter.get("/cracks", async (_req: Request, res: Response) => {
     const cracks: CrackEntity[] = await CrackModel.getCracks();
     cracks.length > 0
     // Cambio version 2
-      ? res.status(200).send(JSON.stringify(cracks))
+      ? res.status(200).send(JSON.stringify({cracks: cracks}))
       : res.status(203).send([]);
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
