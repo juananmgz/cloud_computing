@@ -1,7 +1,7 @@
 FROM node:16
 
 # Creando el directorio de la aplicación
-WORKDIR /usr/src/Router-microservice-v1
+WORKDIR /usr/src/router
 
 # Instalando todas sus dependencias
 COPY package*.json ./

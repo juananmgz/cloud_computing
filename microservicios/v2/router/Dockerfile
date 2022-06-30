@@ -1,7 +1,7 @@
 FROM node:16
 
 # Creando el directorio de la aplicación
-WORKDIR /usr/src/Drinks-microservice-v2
+WORKDIR /usr/src/router
 
 # Instalando todas sus dependencias
 COPY package*.json ./
@@ -9,5 +9,5 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 400
-CMD [ "npm", "test" ]
+EXPOSE 4002
+CMD [ "npm", "start" ]

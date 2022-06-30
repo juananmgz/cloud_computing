@@ -11,15 +11,13 @@ docker rm $(docker ps -a -q)
 # ------------##                RESET KUBERNETES                ##------------ #
 #             ####################################################             #
 
-kubectl delete -f ./kubernetes/enrouting_v1.yaml
-kubectl delete -f ./kubernetes/enrouting_v2.yaml
-kubectl delete -f ./kubernetes/enrouting_50-50.yaml
-kubectl delete -f ./kubernetes/enrouting_specific.yaml
+kubectl delete -f ./kubernetes/enroutings/enrouting_v1.yaml
+kubectl delete -f ./kubernetes/enroutings/enrouting_v2.yaml
+kubectl delete -f ./kubernetes/enroutings/enrouting_50-50.yaml
+kubectl delete -f ./kubernetes/enroutings/enrouting_specific.yaml
 
 
 kubectl delete -f ./kubernetes/gateway.yaml
-kubectl delete -f ./kubernetes/virtual_service_router.yaml
-kubectl delete -f ./kubernetes/virtual_service_frontend.yaml
 
 
 kubectl delete -f ./kubernetes/deployments/version_1/deployment_drinks.yaml
@@ -32,10 +30,11 @@ kubectl delete -f ./kubernetes/deployments/version_2/deployment_cracks.yaml
 kubectl delete -f ./kubernetes/deployments/version_2/deployment_router.yaml
 kubectl delete -f ./kubernetes/deployments/version_2/deployment_frontend.yaml
 
-kubectl delete -f ./kubernetes/services/service_drinks.yaml
-kubectl delete -f ./kubernetes/services/service_cracks.yaml
-kubectl delete -f ./kubernetes/services/service_router.yaml
-kubectl delete -f ./kubernetes/services/service_frontend.yaml
+
+# kubectl delete -f ./kubernetes/services/service_drinks.yaml
+# kubectl delete -f ./kubernetes/services/service_cracks.yaml
+# kubectl delete -f ./kubernetes/services/service_router.yaml
+# kubectl delete -f ./kubernetes/services/service_frontend.yaml
 
 
 # kubectl delete -f ./kubernetes/deployments/deploy_mariadb.yaml
@@ -89,20 +88,21 @@ istioctl dashboard kiali
 # ------------##               DOCKER IMAGES - V1               ##------------ #
 #             ####################################################             #
 
-docker build -t drinks-microservice:1.0.1 ./microservicios/Drinks-microservice-v1
-docker build -t cracks-microservice:1.0.1 ./microservicios/Cracks-microservice-v1
-docker build -t router-microservice:1.0.1 ./microservicios/Router-microservice-v1
-docker build -t frontend-microservice:1.0.1 ./microservicios/Frontend-microservice-v1
+docker build -t drinks-microservice:1.0.1 ./microservicios/v1/drinks
+docker build -t cracks-microservice:1.0.1 ./microservicios/v1/cracks
+docker build -t router-microservice:1.0.1 ./microservicios/v1/router
+docker build -t frontend-microservice:1.0.1 ./microservicios/v1/frontend
 
 
 #             ####################################################             #
 # ------------##               DOCKER IMAGES - V2               ##------------ #
 #             ####################################################             #
 
-docker build -t drinks-microservice:1.0.2 ./microservicios/Drinks-microservice-v2
-docker build -t cracks-microservice:1.0.2 ./microservicios/Cracks-microservice-v2
-docker build -t router-microservice:1.0.2 ./microservicios/Router-microservice-v2
-docker build -t frontend-microservice:1.0.2 ./microservicios/Frontend-microservice-v2
+docker build -t drinks-microservice:1.0.2 ./microservicios/v2/drinks
+docker build -t cracks-microservice:1.0.2 ./microservicios/v2/cracks
+docker build -t router-microservice:1.0.2 ./microservicios/v2/router
+docker build -t frontend-microservice:1.0.2 ./microservicios/v2/frontend
+
 
 
 
@@ -153,7 +153,7 @@ kubectl apply -f ./kubernetes/deployments/version_2/deployment_frontend.yaml
 
 #### CREATING DATA (pods: drinks y cracks):
   ## -> clear; kubectl exec --stdin --tty <drinks-pod> -- /bin/bash
-  ## -> [inside the pod] npm run create-data; exit
+  ## [inside the pod] -> npm run create-data; exit
 
 
 
@@ -170,8 +170,6 @@ kubectl apply -f ./kubernetes/deployments/version_2/deployment_frontend.yaml
 #             ####################################################             #
 
 kubectl apply -f ./kubernetes/gateway.yaml
-kubectl apply -f ./kubernetes/virtual_service_router.yaml
-kubectl apply -f ./kubernetes/virtual_service_frontend.yaml
 
 
 
@@ -180,14 +178,19 @@ kubectl apply -f ./kubernetes/virtual_service_frontend.yaml
 #             ####################################################             #
 
 ### Routing - 100% traffic to V1
-kubectl apply -f ./kubernetes/enrouting_v1.yaml
+kubectl apply -f ./kubernetes/enroutings/enrouting_v1.yaml
 ### Routing - 100% traffic to V2
-kubectl apply -f ./kubernetes/enrouting_v2.yaml
+kubectl apply -f ./kubernetes/enroutings/enrouting_v2.yaml
 ### Routing - 50% traffic to V1 + 50% traffic to V2
-kubectl apply -f ./kubernetes/enrouting_50-50.yaml
+kubectl apply -f ./kubernetes/enroutings/enrouting_50-50.yaml
 ### Routing - Specific nodes traffic
-kubectl apply -f ./kubernetes/enrouting_specific.yaml
+kubectl apply -f ./kubernetes/enroutings/enrouting_specific.yaml
 
+
+
+#             ####################################################             #
+# ------------##                    CLUSTERS                    ##------------ #
+#             ####################################################             #
 
 
 

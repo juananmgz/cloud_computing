@@ -1,7 +1,7 @@
 FROM node:16
 
 # Creando el directorio de la aplicación
-WORKDIR /usr/src/Drinks-microservice-v1
+WORKDIR /usr/src/drinks
 
 # Instalando todas sus dependencias
 COPY package*.json ./

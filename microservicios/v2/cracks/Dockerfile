@@ -1,7 +1,7 @@
 FROM node:16
 
 # Creando el directorio de la aplicación
-WORKDIR /usr/src/Cracks-microservice-v2
+WORKDIR /usr/src/cracks
 
 # Instalando todas sus dependencias
 COPY package*.json ./

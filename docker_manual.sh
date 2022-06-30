@@ -21,15 +21,16 @@ docker network rm cloud-computing
 # ------------##                     IMAGES                     ##------------ #
 #             ####################################################             #
 
-docker build -t drinks-microservice:1.0.1 ./microservicios/Drinks-microservice-v1
-docker build -t cracks-microservice:1.0.1 ./microservicios/Cracks-microservice-v1
-docker build -t router-microservice:1.0.1 ./microservicios/Router-microservice-v1
-docker build -t frontend-microservice:1.0.1 ./microservicios/Frontend-microservice-v1
+docker build -t drinks-microservice:1.0.1 ./microservicios/v1/drinks
+docker build -t cracks-microservice:1.0.1 ./microservicios/v1/cracks
+docker build -t router-microservice:1.0.1 ./microservicios/v1/router
+docker build -t frontend-microservice:1.0.1 ./microservicios/v1/frontend
 
-# docker build -t drinks-microservice:1.0.2 ./microservicios/Drinks-microservice-v2
-# docker build -t cracks-microservice:1.0.2 ./microservicios/Cracks-microservice-v2
-# docker build -t router-microservice:1.0.2 ./microservicios/Router-microservice-v2
-# docker build -t frontend-microservice:1.0.2 ./microservicios/Frontend-microservice-v2
+# docker build -t drinks-microservice:1.0.2 ./microservicios/v2/drinks
+# docker build -t cracks-microservice:1.0.2 ./microservicios/v2/cracks
+# docker build -t router-microservice:1.0.2 ./microservicios/v2/router
+# docker build -t frontend-microservice:1.0.2 ./microservicios/v2/frontend
+
 
 
 #             ####################################################             #
