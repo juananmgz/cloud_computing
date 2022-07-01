@@ -1,0 +1,23 @@
+################################################################################
+#  VIRTUAL SERVICE - FRONTEND                                                  #
+################################################################################
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: frontend
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - services-gateway
+  http:
+    - match:
+        - uri:
+            exact: /
+      route:
+        - destination:
+            host: frontend
+            port:
+              number: 4005
+

@@ -18,6 +18,8 @@ kubectl delete -f ./kubernetes/enroutings/enrouting_specific.yaml
 
 
 kubectl delete -f ./kubernetes/gateway.yaml
+kubectl delete -f ./kubernetes/virtual-service_router.yaml
+kubectl delete -f ./kubernetes/virtual-service_frontend.yaml
 
 
 kubectl delete -f ./kubernetes/deployments/version_1/deployment_drinks.yaml
@@ -152,7 +154,7 @@ kubectl apply -f ./kubernetes/deployments/version_2/deployment_frontend.yaml
 
 
 #### CREATING DATA (pods: drinks y cracks):
-  ## -> clear; kubectl exec --stdin --tty <drinks-pod> -- /bin/bash
+  ## -> clear; kubectl exec --stdin --tty <drinks> -- /bin/bash
   ## [inside the pod] -> npm run create-data; exit
 
 
@@ -170,6 +172,8 @@ kubectl apply -f ./kubernetes/deployments/version_2/deployment_frontend.yaml
 #             ####################################################             #
 
 kubectl apply -f ./kubernetes/gateway.yaml
+kubectl apply -f ./kubernetes/virtual-service_router.yaml
+kubectl apply -f ./kubernetes/virtual-service_frontend.yaml
 
 
 
@@ -193,6 +197,38 @@ kubectl apply -f ./kubernetes/enroutings/enrouting_specific.yaml
 #             ####################################################             #
 
 
+### Cluster 1
+kubectl label --context=$CTX_CLUSTER1 namespace default istio-injection=enabled
+
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_drinks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_cracks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_router.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_frontend.yaml
+
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_drinks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_cracks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_router.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_frontend.yaml
+
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/gateway.yaml
+istioctl analyze
+
+
+### Cluster 2
+kubectl label --context=$CTX_CLUSTER1 namespace default istio-injection=enabled
+
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_drinks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_cracks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_router.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/services/service_frontend.yaml
+
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_drinks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_cracks.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_router.yaml
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/deployments/version_1/deployment_frontend.yaml
+
+kubectl apply --context=$CTX_CLUSTER1 -f ./kubernetes/gateway.yaml
+istioctl analyze
 
 
 
